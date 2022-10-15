@@ -1,0 +1,56 @@
+<html>
+  <button id="button">Search device...</button>
+</html>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+   const buttons = document.getElementsByTagName('button')
+   const searchButton = buttons[0]
+   
+   const serviceUUID = '19b10010-e8f2-537e-4f6c-d104768a1214';
+   const characteristicUUID = '19b10012-e8f2-537e-4f6c-d104768a1214';
+
+   searchButton.onclick = function() {
+      navigator.bluetooth.requestDevice({
+         filters: [{
+            name: "ArduinoTemp",
+         }],
+         optionalServices: [serviceUUID] // Required to access service later.
+      })
+      .then(device => {
+         console.log('device', device);
+         // Attempts to connect to remote GATT Server.
+         return device.gatt.connect();
+      })
+      .then(server => {
+         console.log('server', server);
+         // Getting Service…
+         return server.getPrimaryService(serviceUUID);
+      })
+      .then(service => {
+         console.log('service', service);
+         // Getting Characteristic…
+         return service.getCharacteristic(characteristicUUID);
+      })
+      .then(characteristic => characteristic.startNotifications())
+      .then(characteristic => {
+         characteristic.addEventListener('characteristicvaluechanged', handleBatteryLevelChanged);
+         // Reading value…
+         return characteristic.readValue();
+      })
+      .then(value => {
+         console.log('value0', value.getUint8(0));
+      })
+      .catch(error => {
+         console.error(error);
+      });
+   }
+})
+
+function handleBatteryLevelChanged(event) {
+   const value = event.target.value.getUint8(0);
+   console.log('value', value);
+}
+ 
+</script>
