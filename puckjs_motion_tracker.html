@@ -17,49 +17,40 @@ Puck.accelWr(0x5E,0x20);  // MD1_CFG wakeup on INT1
 
 var idleTimeout;
 
-let data = [];
-
-Puck.on('accel',function(a) {
-  
+Puck.on('accel',function(motion) {
   LED.set();
   if (idleTimeout) clearTimeout(idleTimeout);
-  else print("Motion", a);
+  else print(motion.acc.x + '/');
   idleTimeout = setTimeout(function() {
     idleTimeout = undefined;
     LED.reset();
-    data.push(a);
   },500);
   
 });
+
+function execute() {
+   return "azer";
+}
 -->
 
 <html>
    <button id="cnx">CNX</button>
+   <button id="cmd">Send command to puck</button>
 
-   <button onclick="getData()">Get Data</button>
    <span id="result"></span>
 </html>
 
 <script src="https://www.espruino.com/js/uart.js"></script>
 
 <script>
-function getData() {
-   UART.eval('data', function(data) {
-      document.getElementById("result").innerHTML = JSON.stringify(data)
-   })
-}
-
-var cnx = document.getElementById('cnx');
-
-// When clicked, connect or disconnect
 var connection;
 
-cnx.addEventListener("click", function() {
+document.getElementById('cnx').addEventListener("click", function() {
    if (connection) {
       connection.close();
       connection = undefined;
    }
-   Puck.connect(function(c) {
+   UART.connect(function(c) {
       if (!c) {
          alert("Couldn't connect!");
          return;
@@ -69,17 +60,20 @@ cnx.addEventListener("click", function() {
       var buf = "";
       connection.on("data", function(d) {
          buf += d;
-         var i = buf.indexOf("\n");
-         while (i>=0) {
-            console.log("Received: "+JSON.stringify(buf.substr(0,i)));
+         var i = buf.indexOf("/");
+         while (i >= 0) {
+            console.log("Received: " + buf.substr(0, i));
 
             buf = buf.substr(i+1);
-            i = buf.indexOf("\n");
+            i = buf.indexOf("/");
          }
       });
-
-      connection.write("reset();\n", function() {
-      })
    })
+})
 
+document.getElementById('cmd').addEventListener("click", function() {
+   connection.write("execute();\n", function(x) {
+      console.log('x', x);
+   })
+})
 </script>
