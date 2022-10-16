@@ -21,7 +21,7 @@ Puck.on('accel',function(a) {
 <script>
 function getStepCount() {
    UART.eval('steps', function(t) {
-      document.getElementById("result").innerHTML = t
+      document.getElementById("result").innerHTML = JSON.stringify(t)
    })
 }
 </script>
