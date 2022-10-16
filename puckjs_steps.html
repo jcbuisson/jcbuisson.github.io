@@ -2,7 +2,7 @@
 
 <!--
    load espruino with:
-   
+
 require("puckjsv2-accel-steps").on();
 var steps = 0;
 Puck.on('accel',function(a) {
@@ -12,16 +12,16 @@ Puck.on('accel',function(a) {
 -->
 
 <html>
-<body>
+   <button onclick="getStepCount()">Get Step Count</button>
+   <span id="result"></span>
+</html>
+
 <script src="https://www.espruino.com/js/uart.js"></script>
+
 <script>
 function getStepCount() {
    UART.eval('steps', function(t) {
-      document.getElementById("result").innerHTML = t;
-   });
+      document.getElementById("result").innerHTML = t
+   })
 }
 </script>
-<button onclick="getStepCount()">Get Step Count</button>
-<span id="result"></span>
-</body>
-</html>
