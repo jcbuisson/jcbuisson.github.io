@@ -1,4 +1,5 @@
 <!-- see: https://www.espruino.com/UART.js -->
+<!-- see: https://www.espruino.com/Puck.js#accelerometer-gyro -->
 
 <!--
    load espruino with:
@@ -16,7 +17,7 @@ Puck.accelWr(0x5E,0x20);  // MD1_CFG wakeup on INT1
 
 var idleTimeout;
 
-let steps = [];
+let data = [];
 
 Puck.on('accel',function(a) {
   
@@ -26,7 +27,7 @@ Puck.on('accel',function(a) {
   idleTimeout = setTimeout(function() {
     idleTimeout = undefined;
     LED.reset();
-    steps.push(a);
+    data.push(a);
   },500);
   
 });
@@ -41,8 +42,8 @@ Puck.on('accel',function(a) {
 
 <script>
 function getData() {
-   UART.eval('steps', function(t) {
-      document.getElementById("result").innerHTML = JSON.stringify(t)
+   UART.eval('data', function(data) {
+      document.getElementById("result").innerHTML = JSON.stringify(data)
    })
 }
 </script>
