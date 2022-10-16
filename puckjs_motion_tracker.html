@@ -1,0 +1,48 @@
+<!-- see: https://www.espruino.com/UART.js -->
+
+<!--
+   load espruino with:
+
+Puck.accelOn();
+Puck.accelWr(0x15,0x10);  // CTRL6-C - XL_HM_MODE=1, low power
+Puck.accelWr(0x0D,0x00); // INT1_CTRL - disable
+Puck.accelWr(0x11,0); // CTRL2_G power down gyro
+//Puck.accelWr(0x10,0x60);  // CTRL1_XL accelerometer 416hz
+Puck.accelWr(0x10,0x10);  // CTRL1_XL accelerometer 12.5hz
+Puck.accelWr(0x58,0x90); // TAP_CFG - enable irq, add filter
+Puck.accelWr(0x5C, 0x02); // WAKE_UP_DUR - very low duration
+Puck.accelWr(0x5B, 0x02); // WAKE_UP_THS - low threshold
+Puck.accelWr(0x5E,0x20);  // MD1_CFG wakeup on INT1
+
+var idleTimeout;
+
+let steps = [];
+
+Puck.on('accel',function(a) {
+  
+  LED.set();
+  if (idleTimeout) clearTimeout(idleTimeout);
+  else print("Motion", a);
+  idleTimeout = setTimeout(function() {
+    idleTimeout = undefined;
+    LED.reset();
+    steps.push(a);
+  },500);
+  
+});
+-->
+
+<html>
+   <button onclick="getData()">Get Data</button>
+   <span id="result"></span>
+</html>
+
+<script src="https://www.espruino.com/js/uart.js"></script>
+
+<script>
+function getData() {
+   UART.eval('steps', function(t) {
+      document.getElementById("result").innerHTML = JSON.stringify(t)
+   })
+}
+</script>
