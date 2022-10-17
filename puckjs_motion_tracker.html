@@ -16,64 +16,66 @@ Puck.accelWr(0x5B, 0x02); // WAKE_UP_THS - low threshold
 Puck.accelWr(0x5E,0x20);  // MD1_CFG wakeup on INT1
 
 var idleTimeout;
+let count = 0;
 
 Puck.on('accel',function(motion) {
-  LED.set();
-  if (idleTimeout) clearTimeout(idleTimeout);
-  else print(motion.acc.x + '/');
-  idleTimeout = setTimeout(function() {
-    idleTimeout = undefined;
-    LED.reset();
-  },500);
-  
+  print(count + ':' + motion.acc.x + '.' + motion.acc.y + '.' + motion.acc.z);
+  count += 1;
 });
 
 function execute() {
    return "azer";
-}
--->
+}-->
 
 <html>
    <button id="cnx">CNX</button>
-   <button id="cmd">Send command to puck</button>
+   <button id="cmd">SEND</button>
 
-   <span id="result"></span>
+   <div id="result" style="width: 400px; height: 400px; background-color: #dddddd"></div>
 </html>
 
 <script src="https://www.espruino.com/js/uart.js"></script>
 
 <script>
-var connection;
+let connection
 
-document.getElementById('cnx').addEventListener("click", function() {
+let cnxButton = document.getElementById('cnx')
+let resultButton = document.getElementById('cnx')
+
+cnxButton.addEventListener("click", function() {
    if (connection) {
       connection.close();
       connection = undefined;
    }
    UART.connect(function(c) {
       if (!c) {
-         alert("Couldn't connect!");
-         return;
+         alert("Couldn't connect!")
+         return
       }
-      connection = c;
+      connection = c
 
-      var buf = "";
+      let buf = ""
+      const lines = []
       connection.on("data", function(d) {
          buf += d;
-         var i = buf.indexOf("/");
+         let i = buf.indexOf("\n");
          while (i >= 0) {
-            console.log("Received: " + buf.substr(0, i));
+            const line = buf.substr(0, i)
+            console.log("Received: " + line)
+            if (lines.length >= 10) lines.shift()
+            lines.push(line)
+            result.textContent = lines.join('\n')
 
-            buf = buf.substr(i+1);
-            i = buf.indexOf("/");
+            buf = buf.substr(i+1)
+            i = buf.indexOf("\n")
          }
-      });
+      })
    })
 })
 
 document.getElementById('cmd').addEventListener("click", function() {
    connection.write("execute();\n", function(x) {
-      console.log('x', x);
+      console.log('x', x)
    })
 })
 </script>
