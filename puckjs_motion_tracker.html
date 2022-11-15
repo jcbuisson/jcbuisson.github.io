@@ -18,9 +18,15 @@ Puck.accelWr(0x5E,0x20);  // MD1_CFG wakeup on INT1
 
 var idleTimeout;
 let count = 0;
+let log = [];
 
-Puck.on('accel',function(motion) {
-  print('  ' + Date.now() + ' : ' + motion.acc.x + ', ' + motion.acc.y + ', ' + motion.acc.z);
+Puck.on('accel', function(motion) {
+  "compiled";
+  log.push([Date.now(), motion.acc.x, motion.acc.y, motion.acc.z]);
+  if (log.length > 10) {
+    print(JSON.stringify(log));
+    log = [];
+  }
   count += 1;
 });
 
