@@ -65,10 +65,10 @@ cnxButton.addEventListener("click", function() {
          let i = buf.indexOf("\n");
          while (i >= 0) {
             const line = buf.substr(0, i)
-            console.log("Received: " + line)
+            console.log(line)
             if (lines.length >= 10) lines.shift()
             lines.push(line)
-            resultDiv.innerHTML = lines.join('<br>')
+            resultDiv.innerHTML = line
 
             buf = buf.substr(i+1)
             i = buf.indexOf("\n")
