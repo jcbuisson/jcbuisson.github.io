@@ -65,8 +65,7 @@ cnxButton.addEventListener("click", function() {
             console.log("Received: " + line)
             if (lines.length >= 10) lines.shift()
             lines.push(line)
-            // result.textContent = lines.join('\n')
-            resultDiv.htmlContent = lines.join('<br>')
+            resultDiv.innerHTML = lines.join('<br>')
 
             buf = buf.substr(i+1)
             i = buf.indexOf("\n")
