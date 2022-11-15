@@ -1,3 +1,9 @@
+<!--
+setWatch(function() {
+  console.log("Pressed");
+}, BTN, {edge:"rising", debounce:50, repeat:true});
+-->
+
 <html>
    <div>
       <button id="cnx">CNX</button>
@@ -13,12 +19,15 @@
 <script src="https://www.espruino.com/js/uart.js"></script>
 
 <script>
-   const cnxButton = document.getElementById('cnx')
+const cnxButton = document.getElementById('cnx')
 
-   const redCircle = document.getElementById('red')
-   const yellowCircle = document.getElementById('yellow')
+const redCircle = document.getElementById('red')
+const yellowCircle = document.getElementById('yellow')
 
-   cnxButton.addEventListener("click", function() {
+let connection
+
+cnxButton.addEventListener("click", function() {
+   console.log('cliekc')
    if (connection) {
       connection.close();
       connection = undefined;
@@ -40,7 +49,8 @@
             console.log("Received: " + line)
 
             if (line.includes("Pressed")) {
-               yellowCircle.style['background-color'] = 'blue'
+               console.log('yes', yellowCircle.fill)
+               yellowCircle.fill = 'blue'
             }
 
             buf = buf.substr(i+1)
@@ -49,6 +59,4 @@
       })
    })
 })
-
-
 </script>

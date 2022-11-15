@@ -37,10 +37,11 @@ function execute() {
 <script src="https://www.espruino.com/js/uart.js"></script>
 
 <script>
-let connection
+const cnxButton = document.getElementById('cnx')
+const cmdButton = document.getElementById('cmd')
+const resultDiv = document.getElementById('result')
 
-let cnxButton = document.getElementById('cnx')
-let resultButton = document.getElementById('cnx')
+let connection
 
 cnxButton.addEventListener("click", function() {
    if (connection) {
@@ -64,7 +65,8 @@ cnxButton.addEventListener("click", function() {
             console.log("Received: " + line)
             if (lines.length >= 10) lines.shift()
             lines.push(line)
-            result.textContent = lines.join('\n')
+            // result.textContent = lines.join('\n')
+            resultDiv.textContent = lines.join('<br>')
 
             buf = buf.substr(i+1)
             i = buf.indexOf("\n")
@@ -73,7 +75,7 @@ cnxButton.addEventListener("click", function() {
    })
 })
 
-document.getElementById('cmd').addEventListener("click", function() {
+cmdButton.addEventListener("click", function() {
    connection.write("execute();\n", function(x) {
       console.log('x', x)
    })
