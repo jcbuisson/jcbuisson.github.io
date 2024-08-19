@@ -1,62 +1,73 @@
-<!--
-setWatch(function() {
-  console.log("Pressed");
-}, BTN, {edge:"rising", debounce:50, repeat:true});
--->
-
 <html>
    <div>
       <button id="cnx">CNX</button>
    </div>
    <br>
 
-   <svg>
-      <circle id="red" cx="50" cy="50" r="40" stroke="green" fill="red" />
-      <circle id="yellow" cx="200" cy="50" r="40" stroke="green" fill="yellow" />
+   <svg width="300" height="200">
+      <circle id="red" cx="100" cy="100" r="80" stroke="green" fill="red" />
    </svg>
+
+   <h1>PUCK.JS CODE</h1>
+   <pre>
+setWatch(function() {
+   print("press"); // sent through UART
+}, BTN, {edge: "rising", debounce: 50, repeat: true});
+
+setWatch(function() {
+   print("release"); // sent through UART
+}, BTN, {edge: "falling", debounce: 50, repeat: true});
+   </pre>
 </html>
 
 <script src="https://www.espruino.com/js/uart.js"></script>
+<script src="https://www.puck-js.com/puck.js"></script>
 
 <script>
 const cnxButton = document.getElementById('cnx')
 
-const redCircle = document.getElementById('red')
-const yellowCircle = document.getElementById('yellow')
+const circleElt = document.getElementById('red')
+console.log('circleElt', circleElt, circleElt.getAttribute('fill'))
 
-let connection
+let connection_
 
 cnxButton.addEventListener("click", function() {
-   console.log('cliekc')
+   console.log('click')
    if (connection) {
       connection.close();
-      connection = undefined;
+      connection_ = undefined;
    }
-   UART.connect(function(c) {
-      if (!c) {
+   UART.connect(function(connection) {
+      if (!connection) {
          alert("Couldn't connect!")
          return
       }
-      connection = c
+      connection_ = connection
 
       let buf = ""
-      const lines = []
       connection.on("data", function(d) {
          buf += d;
          let i = buf.indexOf("\n");
          while (i >= 0) {
             const line = buf.substr(0, i)
-            console.log("Received: " + line)
-
-            if (line.includes("Pressed")) {
-               console.log('yes', yellowCircle.fill)
-               yellowCircle.fill = 'blue'
-            }
-
+            console.log('line', line)
+            handleCommand(line)
             buf = buf.substr(i+1)
             i = buf.indexOf("\n")
          }
       })
    })
 })
+
+function handleCommand(cmd) {
+   if (cmd.includes('press')) {
+      console.log('PRESS')
+      circleElt.setAttribute('fill', 'green')
+      Puck.write('LED1.set();\n');
+   } else if (cmd.includes('release')) {
+      console.log('RELEASE')
+      circleElt.setAttribute('fill', 'red')
+      Puck.write('LED1.reset();\n');
+   }
+}
 </script>

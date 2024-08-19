@@ -2,9 +2,15 @@
 <!-- see: https://www.espruino.com/Puck.js#accelerometer-gyro -->
 <!-- see: https://www.espruino.com/files/LSM6DS3TR-C.pdf -->
 
-<!--
-   load espruino with:
 
+<html>
+   <button id="cnx">CNX</button>
+   <button id="cmd">SEND</button>
+
+   <div id="result" style="width: 400px; height: 400px; background-color: #dddddd"></div>
+
+   <h1>PUCK.JS CODE</h1>
+   <pre>
 Puck.accelOn();
 Puck.accelWr(0x15,0x10);  // CTRL6-C - XL_HM_MODE=1, low power
 Puck.accelWr(0x0D,0x00); // INT1_CTRL - disable
@@ -21,26 +27,27 @@ let count = 0;
 let log = [];
 
 Puck.on('accel', function(motion) {
-  "compiled";
-  log.push([Date.now(), motion.acc.x, motion.acc.y, motion.acc.z]);
-  if (log.length > 10) {
-    print(JSON.stringify(log));
-    log = [];
-  }
-  count += 1;
+   "compiled";
+   log.push([Date.now(), motion.acc.x, motion.acc.y, motion.acc.z]);
+   if (log.length > 10) {
+      print(JSON.stringify(log));
+      log = [];
+   }
+   count += 1;
 });
 
 function execute() {
    return "count: " + count;
 }
--->
+   </pre>
 
+   <h1>Documentation</h1>
+   <ul>
+      <li>Web API : [https://web.dev/bluetooth/](https://web.dev/bluetooth/)</li>
+      <li>PuckJS / accelerometer : [https://www.espruino.com/Puck.js#accelerometer-gyro](https://www.espruino.com/Puck.js#accelerometer-gyro)</li>
+      <li>LSM6DS3TR: [https://www.espruino.com/files/LSM6DS3TR-C.pdf](https://www.espruino.com/files/LSM6DS3TR-C.pdf)</li>
+   </ul>
 
-<html>
-   <button id="cnx">CNX</button>
-   <button id="cmd">SEND</button>
-
-   <div id="result" style="width: 400px; height: 400px; background-color: #dddddd"></div>
 </html>
 
 <script src="https://www.espruino.com/js/uart.js"></script>
